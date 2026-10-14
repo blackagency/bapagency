@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { centsToInput, formatUsd } from '@shared/money';
 import { parseStatementDraft } from '@shared/parse';
+import { EditStatementPanel } from '../components/EditStatementPanel';
 import { ResultsPanel } from '../components/ResultsPanel';
 import { api, type SessionUser, type StatementSummary } from '../lib/api';
 
@@ -179,7 +180,6 @@ export function LedgerPage({ user, onLogout }: { user: SessionUser; onLogout: ()
           <span className="brand-mark">BAP</span>
           <div>
             <strong>BAP-Agency</strong>
-            <p>Lãi · lỗ · cổ tức · USD</p>
           </div>
         </div>
         <div className="top-actions">
@@ -196,18 +196,32 @@ export function LedgerPage({ user, onLogout }: { user: SessionUser; onLogout: ()
           <div className="form-head">
             <div>
               <p className="eyebrow">{editingId ? 'Sửa phiếu' : 'Phiếu mới'}</p>
-              <h1>Nhập phát sinh</h1>
+              <h1>{editingId ? 'Sửa phiếu' : 'Nhập phát sinh'}</h1>
             </div>
             <button className="btn btn-ghost" type="button" onClick={resetForm}>
               Phiếu mới
             </button>
           </div>
 
+          {editingId ? (
+            <EditStatementPanel
+              key={editingId}
+              value={{ entryDate, title, names, expenses, incomes }}
+              onChange={(next) => {
+                setEntryDate(next.entryDate);
+                setTitle(next.title);
+                setNames(next.names);
+                setCountText(String(next.names.length));
+                setExpenses(next.expenses);
+                setIncomes(next.incomes);
+              }}
+            />
+          ) : (
+            <>
           <div className="grid-2">
             <label>
               Ngày
               <input type="date" value={entryDate} onChange={(event) => setEntryDate(event.target.value)} required />
-              <small>Mặc định là ngày hiện tại, múi giờ Việt Nam.</small>
             </label>
             <label>
               Tên mục
@@ -260,7 +274,6 @@ export function LedgerPage({ user, onLogout }: { user: SessionUser; onLogout: ()
 
           <MoneyBlock
             title="Chi"
-            hint="Số tiền chi và ai đã chi"
             personLabel="Ai chi"
             lines={expenses}
             names={named}
@@ -268,12 +281,13 @@ export function LedgerPage({ user, onLogout }: { user: SessionUser; onLogout: ()
           />
           <MoneyBlock
             title="Thu"
-            hint="Số tiền thu và ai đã thu"
             personLabel="Ai thu"
             lines={incomes}
             names={named}
             onChange={setIncomes}
           />
+            </>
+          )}
 
           {formError ? <p className="alert">{formError}</p> : null}
           {notice ? <p className="notice">{notice}</p> : null}
@@ -304,6 +318,9 @@ export function LedgerPage({ user, onLogout }: { user: SessionUser; onLogout: ()
                     </em>
                   </button>
                   <p>{statement.people.map((person) => `${person.name} ${formatUsd(person.profitCents)}`).join(' · ')}</p>
+                  <button className="btn btn-ghost" type="button" onClick={() => void editStatement(statement.id)}>
+                    Sửa
+                  </button>
                   <button className="text-danger" type="button" onClick={() => void remove(statement.id)}>
                     Xóa
                   </button>
@@ -319,14 +336,12 @@ export function LedgerPage({ user, onLogout }: { user: SessionUser; onLogout: ()
 
 function MoneyBlock({
   title,
-  hint,
   personLabel,
   lines,
   names,
   onChange,
 }: {
   title: string;
-  hint: string;
   personLabel: string;
   lines: LineDraft[];
   names: string[];
@@ -339,15 +354,8 @@ function MoneyBlock({
   return (
     <section className="block">
       <div className="block-head">
-        <div>
-          <h2>{title}</h2>
-          <p>{hint}</p>
-        </div>
-        <button className="btn btn-ghost" type="button" onClick={() => onChange([...lines, blankLine()])}>
-          Thêm khoản
-        </button>
+        <h2>{title}</h2>
       </div>
-      {lines.length === 0 ? <p className="hint">Chưa có khoản {title.toLowerCase()}.</p> : null}
       {lines.map((line, index) => (
         <div className="line-row" key={line.key}>
           <label>
@@ -380,6 +388,9 @@ function MoneyBlock({
           </button>
         </div>
       ))}
+      <button className="btn btn-ghost" type="button" onClick={() => onChange([...lines, blankLine()])}>
+        Thêm khoản
+      </button>
     </section>
   );
 }
