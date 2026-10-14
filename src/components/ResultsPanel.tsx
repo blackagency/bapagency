@@ -15,14 +15,12 @@ export function ResultsPanel({
       <section className="panel results-card">
         <p className="eyebrow">Kết quả</p>
         <h2>Chưa đủ dữ liệu</h2>
-        <p className={tone === 'bad' ? 'alert' : 'hint'}>{message}</p>
-        <Formula />
+        {tone === 'bad' ? <p className="alert">{message}</p> : null}
       </section>
     );
   }
 
   const profit = calculation.totalProfitCents;
-  const uneven = calculation.people.some((person) => person.dividendCents !== calculation.dividendCents);
 
   return (
     <section className="panel results-card">
@@ -46,11 +44,6 @@ export function ResultsPanel({
           <strong>{formatUsd(calculation.dividendCents)}</strong>
         </article>
       </div>
-      {uneven ? (
-        <p className="hint">
-          Tổng lãi không chia hết từng cent. Phần dư được cộng lần lượt cho người đứng trước để sổ cân bằng về $0.00.
-        </p>
-      ) : null}
       <div className="people">
         {calculation.people.map((person) => (
           <article key={person.name} className="person">
@@ -65,26 +58,11 @@ export function ResultsPanel({
               {formatUsd(person.expenseCents)}
             </p>
             <p className="person-note">
-              {person.profitCents > 0
-                ? 'Được nhận thêm'
-                : person.profitCents < 0
-                  ? 'Cần đưa ra'
-                  : 'Đã cân bằng'}
+              {person.profitCents > 0 ? 'Được nhận thêm' : person.profitCents < 0 ? 'Cần đưa ra' : 'Đã cân bằng'}
             </p>
           </article>
         ))}
       </div>
-      <Formula />
     </section>
-  );
-}
-
-function Formula() {
-  return (
-    <div className="formula">
-      <p>Tổng lãi = tổng thu − tổng chi</p>
-      <p>Cổ tức = tổng lãi / số cổ phần</p>
-      <p>Lợi nhuận từng người = cổ tức − thu của người đó + chi của người đó</p>
-    </div>
   );
 }
