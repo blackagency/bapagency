@@ -12,10 +12,10 @@ binding = "ASSETS"
 run_worker_first = ["/api/*"]
 
 [[d1_databases]]
-binding = "a1c4d8d2-fb84-4507-af73-cbf0e63baff9"
+binding = "DB"
 database_name = "bapagency"
 # Dán database_id của D1 tạo trên tài khoản Cloudflare của bạn.
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "a1c4d8d2-fb84-4507-af73-cbf0e63baff9"
 migrations_dir = "migrations"
 
 [vars]
