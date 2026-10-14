@@ -27,7 +27,6 @@ export function LoginPage({ onSuccess }: { onSuccess: (user: SessionUser) => voi
         <div className="brand-mark">BAP</div>
         <p className="eyebrow">Agency ledger</p>
         <h1>BAP-Agency</h1>
-        <p className="lede">Sổ tính lãi, lỗ và cổ tức. Tiền tệ USD. Ngày theo giờ Việt Nam.</p>
         <label>
           Tên đăng nhập
           <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" />
