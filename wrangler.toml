@@ -1,0 +1,30 @@
+name = "bapagency"
+compatibility_date = "2025-03-01"
+main = "worker/index.ts"
+workers_dev = true
+preview_urls = true
+
+# Frontend (Pages assets) và API (Worker) chạy cùng một dự án.
+[assets]
+directory = "./dist/client"
+not_found_handling = "single-page-application"
+binding = "ASSETS"
+run_worker_first = ["/api/*"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "bapagency"
+# Dán database_id của D1 tạo trên tài khoản Cloudflare của bạn.
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations"
+
+[vars]
+ADMIN_USERNAME = "Admin111"
+SESSION_TTL_HOURS = "24"
+TIMEZONE = "Asia/Ho_Chi_Minh"
+CURRENCY = "USD"
+
+# Bí mật đặt trong dashboard Cloudflare, không ghi vào git:
+#   Settings → Variables and Secrets → Encrypt
+#   ADMIN_PASSWORD
+#   SESSION_SECRET
